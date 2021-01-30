@@ -4,7 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import { useTodoLists } from "../contexts/TodoListsContext";
 import IconButton from "@material-ui/core/IconButton";
-import DoneIcon from "@material-ui/icons/Done";
+import AddIcon from "@material-ui/icons/Add";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TodoListName from "./TodoLists/TodoListName";
 
@@ -46,7 +46,7 @@ const Sidebar = (props) => {
                     }
                   }}
                 >
-                  <DoneIcon />
+                  <AddIcon />
                 </IconButton>
               </InputAdornment>
             ),

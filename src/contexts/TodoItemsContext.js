@@ -22,12 +22,17 @@ const TodoItemsContextProvider = (props) => {
     return config;
   });
 
-  axios.interceptors.response.use((response) => {
-    if (response.status === 401) {
-      setToken(null);
+  axios.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (err) => {
+      if (err.response.status === 401) {
+        setToken(null);
+      }
+      return Promise.reject(err);
     }
-    return response;
-  });
+  );
 
   const getTodoItems = () => {
     axios
@@ -35,10 +40,51 @@ const TodoItemsContextProvider = (props) => {
       .then((res) => setTodoItems(res.data));
   };
 
+  // const toggleComplete = (prevTodoItem) => {
+  //   console.log(prevTodoItem);
+  //   const newTodoItem = {
+  //     ...prevTodoItem,
+  //     completed: !prevTodoItem.completed,
+  //   };
+  //   console.log(newTodoItem);
+  //   handleUpdate(newTodoItem).then((res) =>
+  //     setTodoItems((todoItems) => {
+  //       const newTodoItems = todoItems.map((todoItem) => {
+  //         if (todoItem.id === prevTodoItem.id) return newTodoItem;
+  //         else return todoItem;
+  //       });
+  //       console.log(newTodoItems);
+  //       return newTodoItems;
+  //     })
+  //   );
+  // };
+
+  // const toggleComplete = (prevTodoItem) => {
+  //   setTodoItems((prevTodoItems) => {
+  //     // return prevTodoItems.map((todoItem) => {
+  //     //   if (todoItem.id === prevTodoItem.id) {
+  //     //     return { ...prevTodoItem, completed: !prevTodoItem.completed };
+  //     //   } else {
+  //     //     return todoItem;
+  //     //   }
+  //     // });
+  //     console.log(prevTodoItems);
+  //     const newTodoItems = prevTodoItems.map((todoItem) => {
+  //       if (prevTodoItem.id === todoItem.id) {
+  //         return { ...todoItem, completed: !todoItem.completed };
+  //       } else {
+  //         return todoItem;
+  //       }
+  //     });
+  //     console.log(newTodoItems);
+  //     return newTodoItems;
+  //   });
+  // };
+
   const handleAdd = (todoItem) => {
     axios
       .post(`${URL}/${currTodoList.id}/todo_items`, {
-        todo_item: { ...todoItem },
+        todo_item: { ...todoItem, tag_list: todoItem.tags },
       })
       .then((res) => setTodoItems((todoItems) => [...todoItems, res.data]));
   };
@@ -55,7 +101,7 @@ const TodoItemsContextProvider = (props) => {
 
   const handleUpdate = (todoItem) => {
     return axios.put(`${URL}/${currTodoList.id}/todo_items/${todoItem.id}`, {
-      todo_item: { ...todoItem },
+      todo_item: { ...todoItem, tag_list: todoItem.tags },
     });
   };
 

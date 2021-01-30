@@ -55,10 +55,13 @@ const SignIn = ({ setSignUp }) => {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+        <Typography component="h1" variant="h5">
+          Task Manager
+        </Typography>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h2" variant="h5">
           Sign in
         </Typography>
         {error ? errorMessage : null}

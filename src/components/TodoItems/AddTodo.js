@@ -5,6 +5,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Chip from "@material-ui/core/Chip";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useTodoLists } from "../../contexts/TodoListsContext";
 import { useTodoItems } from "../../contexts/TodoItemsContext";
 
 /*
@@ -12,12 +15,14 @@ Dialog which handles creation of new TodoItem
 */
 
 const AddTodo = ({ addMode, setAddMode }) => {
+  const { tags, setTags } = useTodoLists();
   const { handleAdd } = useTodoItems();
   const [currentTodo, setCurrentTodo] = useState({
     title: "",
     body: "",
     completed: false,
     complete_by: new Date().toISOString().split("T")[0],
+    tags: [],
   });
 
   const handleChange = (e) => {
@@ -28,6 +33,8 @@ const AddTodo = ({ addMode, setAddMode }) => {
 
   const AddTodo = () => {
     if (currentTodo.title !== "") {
+      const newTags = currentTodo.tags.filter((tag) => !tags.includes(tag));
+      setTags((tags) => tags.concat(newTags));
       setAddMode(false);
       handleAdd(currentTodo);
     }
@@ -64,6 +71,34 @@ const AddTodo = ({ addMode, setAddMode }) => {
           defaultValue={currentTodo.complete_by}
           type="date"
           onChange={handleChange}
+        />
+        <Autocomplete
+          multiple
+          freeSolo
+          options={tags}
+          //getOptionLabel={(tag) => tag.name}
+          defaultValue={currentTodo.tags}
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                variant="outlined"
+                label={option}
+                {...getTagProps({ index })}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="filled"
+              label="Add Tags by pressing Enter"
+            />
+          )}
+          onChange={(e, newValue) => {
+            setCurrentTodo((prevTodoItem) => {
+              return { ...prevTodoItem, tags: newValue };
+            });
+          }}
         />
       </DialogContent>
       <DialogActions>

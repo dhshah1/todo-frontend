@@ -14,6 +14,7 @@ const TodoListsContext = createContext();
 const TodoListContextProvider = (props) => {
   const [todoLists, setTodoLists] = useState([]);
   const [currTodoList, setCurrTodoList] = useState();
+  const [tags, setTags] = useState([]);
   const { setToken } = useUser();
 
   const URL = "http://localhost:3001/todo_lists";
@@ -23,17 +24,27 @@ const TodoListContextProvider = (props) => {
     return config;
   });
 
-  axios.interceptors.response.use((response) => {
-    if (response.status === 401) {
-      setToken(null);
+  axios.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (err) => {
+      if (err.response.status === 401) {
+        setToken(null);
+      }
+      return Promise.reject(err);
     }
-    return response;
-  });
+  );
 
   const getTodoLists = () => {
     axios.get(URL).then((res) => {
       setTodoLists(res.data);
       setCurrTodoList(res.data[0]);
+      let currtags = [];
+      if (res.data[0].tags) {
+        currtags = res.data[0].tags.map((tag) => tag.name);
+      }
+      setTags(currtags);
     });
   };
 
@@ -72,6 +83,8 @@ const TodoListContextProvider = (props) => {
         handleAdd,
         handleDelete,
         handleUpdate,
+        tags,
+        setTags,
       }}
     >
       {props.children}

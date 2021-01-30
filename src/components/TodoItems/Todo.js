@@ -6,6 +6,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Chip from "@material-ui/core/Chip";
 import EditTodo from "./EditTodo";
 import { useTodoItems } from "../../contexts/TodoItemsContext";
 
@@ -50,6 +51,16 @@ const Todo = ({ todoListId, ...initialTodoItem }) => {
         secondary={todoItem.body}
         secondaryTypographyProps={{ noWrap: true }}
       />
+      <Chip
+        color="primary"
+        label={
+          "Due by: " +
+          new Date(todoItem.complete_by).toISOString().split("T")[0]
+        }
+      />
+      {todoItem.tags.map((tag, index) => {
+        return <Chip key={index} label={tag.name || tag} />;
+      })}
       <ListItemIcon>
         <IconButton onClick={() => setEditMode(true)}>
           <EditIcon />
